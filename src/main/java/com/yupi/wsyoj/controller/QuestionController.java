@@ -10,10 +10,8 @@ import com.yupi.wsyoj.common.ResultUtils;
 import com.yupi.wsyoj.constant.UserConstant;
 import com.yupi.wsyoj.exception.BusinessException;
 import com.yupi.wsyoj.exception.ThrowUtils;
-import com.yupi.wsyoj.model.dto.question.QuestionAddRequest;
-import com.yupi.wsyoj.model.dto.question.QuestionEditRequest;
-import com.yupi.wsyoj.model.dto.question.QuestionQueryRequest;
-import com.yupi.wsyoj.model.dto.question.QuestionUpdateRequest;
+import com.yupi.wsyoj.model.dto.question.*;
+import com.yupi.wsyoj.model.dto.user.UserQueryRequest;
 import com.yupi.wsyoj.model.entity.Question;
 import com.yupi.wsyoj.model.entity.User;
 import com.yupi.wsyoj.model.vo.QuestionVO;
@@ -66,6 +64,15 @@ public class QuestionController {
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        JudgeConfig judgeConfig = questionAddRequest.getJudgeConfig();
+        if(judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
+        }
+        List<JudgeCase> judgeCase = questionAddRequest.getJudgeCase();
+        if(judgeCase != null) {
+            question.setJudgeCase(GSON.toJson(judgeCase));
+        }
+
         questionService.validQuestion(question, true);
         User loginUser = userService.getLoginUser(request);
         question.setUserId(loginUser.getId());
@@ -120,6 +127,15 @@ public class QuestionController {
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
+        if(judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
+        }
+        List<JudgeCase> judgeCase = questionUpdateRequest.getJudgeCase();
+        if(judgeCase != null) {
+            question.setJudgeCase(GSON.toJson(judgeCase));
+        }
+
         // 参数校验
         questionService.validQuestion(question, false);
         long id = questionUpdateRequest.getId();
@@ -165,6 +181,24 @@ public class QuestionController {
         Page<Question> questionPage = questionService.page(new Page<>(current, size),
                 questionService.getQueryWrapper(questionQueryRequest));
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
+    }
+
+    /**
+     * 分页获取用户列表（仅管理员）
+     *
+     * @param questionQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page/admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<Question>> AdminListQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
+                                                   HttpServletRequest request) {
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
+        Page<Question> questionPage = questionService.page(new Page<>(current, size),
+                questionService.getQueryWrapper(questionQueryRequest));
+        return ResultUtils.success(questionPage);
     }
 
     /**
