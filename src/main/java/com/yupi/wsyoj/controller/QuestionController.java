@@ -110,7 +110,7 @@ public class QuestionController {
     }
 
     /**
-     * 更新（仅管理员）
+     * 更新（仅管理员和自己）
      *
      * @param questionUpdateRequest
      * @return
@@ -147,7 +147,7 @@ public class QuestionController {
     }
 
     /**
-     * 根据 id 获取
+     * 根据 id 获取QuestionVO
      *
      * @param id
      * @return
@@ -162,6 +162,28 @@ public class QuestionController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         return ResultUtils.success(questionService.getQuestionVO(question, request));
+    }
+
+    /**
+     * 根据 id 直接获取Question
+     *  需要脱敏
+     * @param id
+     * @return
+     */
+    @GetMapping("/get")
+    public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Question question = questionService.getById(id);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if(!loginUser.getId().equals(question.getUserId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        return ResultUtils.success(question);
     }
 
     /**

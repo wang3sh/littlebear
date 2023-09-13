@@ -1,0 +1,33 @@
+package com.yupi.wsyoj.judge.codeSandbox.model;
+
+import com.yupi.wsyoj.model.dto.questionsubmit.JudgeInfo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ExecuteCodeResponse {
+
+    private List<String> outputList;
+
+    /**
+     * 接口信息(不属于判题信息，比如沙箱出问题了)
+     */
+    private String message;
+
+    /**
+     * 执行状态
+     */
+    private String status;
+
+    /**
+     * 判题信息
+     */
+    private JudgeInfo judgeInfo;
+}
