@@ -3,9 +3,8 @@ package com.yupi.wsyoj.judge.codeSandbox.Impl;
 import com.yupi.wsyoj.judge.codeSandbox.CodeSandBox;
 import com.yupi.wsyoj.judge.codeSandbox.model.ExecuteCodeRequest;
 import com.yupi.wsyoj.judge.codeSandbox.model.ExecuteCodeResponse;
-import com.yupi.wsyoj.model.dto.questionsubmit.JudgeInfo;
+import com.yupi.wsyoj.judge.codeSandbox.model.JudgeInfo;
 import com.yupi.wsyoj.model.enums.JudgeInfoMessageEnum;
-import com.yupi.wsyoj.model.enums.QuestionSubmitLanguageEnum;
 import com.yupi.wsyoj.model.enums.QuestionSubmitStatusEnum;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class ExampleSandBoxImpl implements CodeSandBox {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         executeCodeResponse.setOutputList(inputList);
         executeCodeResponse.setMessage("测试执行成功");
-        executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCEED.getText());
+        executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
 
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMessage(JudgeInfoMessageEnum.ACCEPTED.getText());

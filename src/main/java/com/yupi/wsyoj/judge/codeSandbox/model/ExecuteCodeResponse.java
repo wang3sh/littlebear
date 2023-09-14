@@ -1,6 +1,5 @@
 package com.yupi.wsyoj.judge.codeSandbox.model;
 
-import com.yupi.wsyoj.model.dto.questionsubmit.JudgeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +23,7 @@ public class ExecuteCodeResponse {
     /**
      * 执行状态
      */
-    private String status;
+    private Integer status;
 
     /**
      * 判题信息
