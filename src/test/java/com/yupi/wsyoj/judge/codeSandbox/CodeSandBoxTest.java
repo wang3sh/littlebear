@@ -53,7 +53,13 @@ class CodeSandBoxTest {
         //用工厂模式优化，传一个字符串，根据字符串返回一个实例即可。
 //        CodeSandBox codeSandBox = new ExampleSandBoxImpl();
         CodeSandBox codeSandBox = CodeSandboxFactory.newInstance(type);
-        String code = "int main() {}";
+        String code = "public class Main { \n" +
+                "    public static void main(String[] args) {\n" +
+                "        int a = Integer.parseInt(args[0]);\n" +
+                "        int b = Integer.parseInt(args[1]);\n" +
+                "        System.out.println(\"结果:\" + (a + b));\n" +
+                "    }\n" +
+                "}";
         String language = QuestionSubmitLanguageEnum.JAVA.getValue();
         List<String> inputList = Arrays.asList("1 2", "3 4");
 
@@ -75,7 +81,13 @@ class CodeSandBoxTest {
 //        CodeSandBox codeSandBox = new ExampleSandBoxImpl();
         CodeSandBox codeSandBox = CodeSandboxFactory.newInstance(type);
         CodeSandboxProxy codeSandboxProxy = new CodeSandboxProxy(codeSandBox);
-        String code = "int main() {}";
+        String code = "public class Main { \n" +
+                "    public static void main(String[] args) {\n" +
+                "        int a = Integer.parseInt(args[0]);\n" +
+                "        int b = Integer.parseInt(args[1]);\n" +
+                "        System.out.println(\"结果:\" + (a + b));\n" +
+                "    }\n" +
+                "}";
         String language = QuestionSubmitLanguageEnum.JAVA.getValue();
         List<String> inputList = Arrays.asList("1 2", "3 4");
 

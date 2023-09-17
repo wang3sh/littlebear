@@ -11,11 +11,16 @@ import com.yupi.wsyoj.constant.UserConstant;
 import com.yupi.wsyoj.exception.BusinessException;
 import com.yupi.wsyoj.exception.ThrowUtils;
 import com.yupi.wsyoj.model.dto.question.*;
+import com.yupi.wsyoj.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.yupi.wsyoj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.yupi.wsyoj.model.dto.user.UserQueryRequest;
 import com.yupi.wsyoj.model.entity.Question;
+import com.yupi.wsyoj.model.entity.QuestionSubmit;
 import com.yupi.wsyoj.model.entity.User;
+import com.yupi.wsyoj.model.vo.QuestionSubmitVO;
 import com.yupi.wsyoj.model.vo.QuestionVO;
 import com.yupi.wsyoj.service.QuestionService;
+import com.yupi.wsyoj.service.QuestionSubmitService;
 import com.yupi.wsyoj.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +48,49 @@ public class QuestionController {
     private UserService userService;
 
     private final static Gson GSON = new Gson();
+
+    @Resource
+    private QuestionSubmitService questionSubmitService;
+
+    /**
+     * 提交题目
+     *
+     * @param questionSubmitAddRequest
+     * @param request
+     * @return 提交结果
+     */
+    @PostMapping("/question_submit/do")
+    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+                                               HttpServletRequest request) {
+        if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 登录才能提交
+        final User loginUser = userService.getLoginUser(request);
+        long questionId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
+        return ResultUtils.success(questionId);
+    }
+
+    /**
+     * 分页获取题目提交列表
+     * 应该只有用户和管理员能看到自己的答案、代码
+     * @param questionSubmitQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/question_submit/list/page/vo")
+    public BaseResponse<Page<QuestionSubmitVO>> listQuestionSubmitByPage(
+            @RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
+            HttpServletRequest request) {
+        long current = questionSubmitQueryRequest.getCurrent();
+        long size = questionSubmitQueryRequest.getPageSize();
+        User loginUser = userService.getLoginUser(request);
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size),
+                questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
+        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
+    }
 
     // region 增删改查
 
